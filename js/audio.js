@@ -1,3 +1,4 @@
+// @ts-check
 /* Jednoduché 8bit zvuky přes WebAudio – žádné soubory. */
 (function () {
   'use strict';
@@ -43,5 +44,5 @@
   A.win = () => seq([523, 659, 784, 1047, 784, 1047], 0.12, { type: 'triangle', vol: 0.07 });
   A.lose = () => seq([392, 330, 262, 196], 0.2, { type: 'square', vol: 0.04, d: 0.3 });
 
-  window.MC_AUDIO = A;
+  window.MC_AUDIO = /** @type {MCAudio} */ (A);
 })();

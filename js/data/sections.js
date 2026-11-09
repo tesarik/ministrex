@@ -1,3 +1,4 @@
+// @ts-check
 /* Sekce a levely.
    Nová sekce = nový objekt v poli. comingSoon: true ji zobrazí na mapě jako zamčenou „Připravujeme“.
    Level:
@@ -6,6 +7,7 @@
      premiumCount  – kolik prémiových otázek se náhodně vybere z `premium`
      premium       – ruční otázky; PRVNÍ odpověď je vždy ta správná (v kvízu se zamíchají) */
 window.MC_DATA = window.MC_DATA || {};
+/** @type {MCSection[]} */
 window.MC_DATA.sections = [
   {
     id: 'predmety',

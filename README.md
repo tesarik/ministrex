@@ -9,6 +9,9 @@ roucha, postoje a gesta, služby ministrantů, průběh mše a liturgické barvy
 Funguje na počítači i na mobilu, bez instalace a bez internetu (kromě písem).
 
 ## Spuštění
+- **Online:** https://tesarik.github.io/ministrex/ (GitHub Pages, nasazuje se z větve `main`).
+  Na mobilu jde přes nabídku prohlížeče **Přidat na plochu / Nainstalovat** – pak se otevírá
+  jako aplikace a funguje **i bez internetu** (po prvním otevření je hra i s písmy uložená v telefonu).
 - **Na počítači:** stačí otevřít `index.html` v prohlížeči.
 - **Přes Wi‑Fi (i pro telefony):** ve složce hry spusť
   ```
@@ -53,8 +56,24 @@ js/data/sections.js   sekce a levely, prémiové otázky, kroky mše
 js/sprites.js         vykreslování obrázků + ručně kreslené UI ikony 16×16
 js/sprite-art.js      VYGENEROVANÉ obrázky předmětů (needitovat ručně)
 js/audio.js           8bitové zvuky (WebAudio)
-tools/draw_sprites.py generátor obrázků předmětů
+js/types.d.ts         typy dat pro kontrolu v editoru (prohlížeč ho nenačítá)
+jsconfig.json         zapíná kontrolu typů v čistém JS (// @ts-check, JSDoc)
+sw.js                 service worker – offline a instalace do mobilu (jen přes http/https)
+manifest.webmanifest  název, barvy a ikony instalované aplikace
+icons/                VYGENEROVANÉ ikony aplikace
+tools/draw_sprites.py generátor obrázků předmětů a ikon
+tools/check.js        kontrola dat (položky, obrázky, levely, offline seznam, verze)
+.github/workflows/    automatická kontrola na GitHubu po každém push
 ```
+
+## Kontrola
+Po každé změně dat nebo obrázků:
+```
+node tools/check.js                                  # data: chybějící obrázky, nepoužité položky…
+npx -y -p typescript@5.6.3 tsc -p jsconfig.json      # typy (VS Code je ukazuje rovnou při psaní)
+```
+Hra se nijak nesestavuje – kontrola typů jen hlídá chyby, kód zůstává obyčejný JavaScript.
+Totéž (a navíc, že `js/sprite-art.js` odpovídá generátoru) spouští GitHub po každém push.
 
 ## Jak přidat obsah
 - **Nový předmět**: záznam v `js/data/items.js` + obrázek se stejným klíčem.
@@ -62,6 +81,8 @@ tools/draw_sprites.py generátor obrázků předmětů
   (funkce pojmenovaná podle klíče, přidat do seznamu `ITEMS`) a vygenerují příkazem
   `python3 tools/draw_sprites.py --preview nahled.png` → `js/sprite-art.js`.
 - **Nový level**: přidej objekt do `levels` v `js/data/sections.js`.
+- **Nový soubor** (skript, styl): přidej ho i do seznamu `FILES` v `sw.js`, jinak nepůjde offline
+  (`tools/check.js` na to upozorní).
 - **Nová sekce**: přidej objekt do `sections`; `comingSoon: true` ji na mapě ukáže jako „Připravujeme“.
 - **Sdílený obrázek**: předmět může použít obrázek jiného (`sprite: 'kalich'`),
   tak jsou udělané třeba služby ministrantů nebo liturgická období.

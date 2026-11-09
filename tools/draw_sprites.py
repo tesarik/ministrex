@@ -6,6 +6,7 @@ polygony, čáry). Skript doplní stínování (světlo zleva shora) a barevný 
 a zapíše výsledek do js/sprite-art.js.
 
 Spuštění:  python3 tools/draw_sprites.py        (volitelně --preview cesta.png)
+Zapíše i ikony aplikace do icons/ (obrázek ICON_SPRITE).
 """
 import json, math, os, sys, zlib, struct
 
@@ -953,6 +954,31 @@ def write_js(pal, spr, mats, path):
         f.write(';\n')
 
 
+def write_png(path, img):
+    """img = řádky RGB trojic"""
+    raw = b''.join(b'\0' + bytes(v for p in row for v in p) for row in img)
+    chunk = lambda t, b: struct.pack('>I', len(b)) + t + b + struct.pack('>I', zlib.crc32(t + b) & 0xffffffff)
+    with open(path, 'wb') as f:
+        f.write(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', len(img[0]), len(img), 8, 2, 0, 0, 0))
+                + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
+
+
+def rgb(hx):
+    hx = hx.lstrip('#')
+    return tuple(int(hx[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def blit(img, pal, rows, ox, oy, scale):
+    for y, r in enumerate(rows):
+        for x, c in enumerate(r):
+            if c == '.':
+                continue
+            col = rgb(pal[c])
+            for yy in range(scale):
+                for xx in range(scale):
+                    img[oy + y * scale + yy][ox + x * scale + xx] = col
+
+
 def preview(pal, spr, path, scale=4):
     ids = list(spr)
     cols = 6
@@ -960,21 +986,24 @@ def preview(pal, spr, path, scale=4):
     rows = (len(ids) + cols - 1) // cols
     img = [[(35, 32, 58)] * (cols * cell) for _ in range(rows * cell)]
     for n, k in enumerate(ids):
-        ox, oy = (n % cols) * cell + 2 * scale, (n // cols) * cell + 2 * scale
-        for y, r in enumerate(spr[k]):
-            for x, c in enumerate(r):
-                if c == '.':
-                    continue
-                hx = pal[c].lstrip('#')
-                col = tuple(int(hx[i:i + 2], 16) for i in (0, 2, 4))
-                for yy in range(scale):
-                    for xx in range(scale):
-                        img[oy + y * scale + yy][ox + x * scale + xx] = col
-    raw = b''.join(b'\0' + bytes(v for p in row for v in p) for row in img)
-    chunk = lambda t, b: struct.pack('>I', len(b)) + t + b + struct.pack('>I', zlib.crc32(t + b) & 0xffffffff)
-    with open(path, 'wb') as f:
-        f.write(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', len(img[0]), len(img), 8, 2, 0, 0, 0))
-                + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
+        blit(img, pal, spr[k], (n % cols) * cell + 2 * scale, (n // cols) * cell + 2 * scale, scale)
+    write_png(path, img)
+
+
+ICON_SPRITE = 'kalich'
+ICON_BG = '#23203a'   # --night z css/style.css
+
+
+def icons(pal, spr, outdir):
+    """ikony aplikace (PWA): obrázek uprostřed s celými násobky pixelů,
+    zabírá ≤ 75 % plochy, takže sedí i do kruhové/„maskable“ ikony"""
+    os.makedirs(outdir, exist_ok=True)
+    for size in (180, 192, 512):
+        scale = int(size * .75) // W
+        img = [[rgb(ICON_BG)] * size for _ in range(size)]
+        off = (size - W * scale) // 2
+        blit(img, pal, spr[ICON_SPRITE], off, off, scale)
+        write_png(os.path.join(outdir, f'icon-{size}.png'), img)
 
 
 if __name__ == '__main__':
@@ -983,4 +1012,5 @@ if __name__ == '__main__':
     write_js(pal, spr, mats, os.path.join(root, 'js', 'sprite-art.js'))
     if '--preview' in sys.argv:
         preview(pal, spr, sys.argv[sys.argv.index('--preview') + 1])
+    icons(pal, spr, os.path.join(root, 'icons'))
     print(f'{len(spr)} spritů → js/sprite-art.js')

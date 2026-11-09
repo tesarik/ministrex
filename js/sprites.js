@@ -1,3 +1,4 @@
+// @ts-check
 /* Pixelové sprity – každý řádek je jeden řádek pixelů, každý znak je barva z palety.
    '.' = průhledná. Nový předmět = nový záznam v SPR se stejným klíčem jako v items.js. */
 (function () {
@@ -111,6 +112,7 @@
 
   // mapa znaků materiálu na jiný znak (např. zhasnutí plamene)
   function hideMat(mat) {
+    /** @type {Record<string, string>} */
     const m = {};
     (ART.mats[mat] || []).forEach((c) => { m[c] = '.'; });
     return m;

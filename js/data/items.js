@@ -1,3 +1,4 @@
+// @ts-check
 /* Encyklopedie předmětů.
    name  – název (zobrazuje se v odpovědích)
    desc  – vysvětlení (učebna + zpětná vazba po odpovědi)
@@ -11,6 +12,7 @@
            Bez zdroje = obecný popis, ke kontrole knězem / vedoucím ministrantů.
    Klíč musí odpovídat funkci v tools/draw_sprites.py (obrázek). */
 window.MC_DATA = window.MC_DATA || {};
+/** @type {Record<string, MCItem>} */
 window.MC_DATA.items = {
   // ---------- příprava darů ----------
   kalich: {

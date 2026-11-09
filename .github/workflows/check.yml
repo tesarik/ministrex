@@ -1,0 +1,27 @@
+name: Kontrola
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntaxe JS
+        run: for f in js/*.js js/data/*.js sw.js tools/check.js; do node --check "$f"; done
+      - name: Kontrola dat
+        run: node tools/check.js
+      - name: Kontrola typů (JSDoc)
+        run: npx -y -p typescript@5.6.3 tsc -p jsconfig.json
+      - name: Obrázky odpovídají generátoru
+        run: |
+          python3 tools/draw_sprites.py
+          git diff --exit-code -- js/sprite-art.js icons/ || { echo "::error::js/sprite-art.js nebo icons/ neodpovídají tools/draw_sprites.py – spusť python3 tools/draw_sprites.py"; exit 1; }

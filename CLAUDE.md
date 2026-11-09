@@ -14,6 +14,12 @@ S uživatelem komunikuj česky.
   zobrazované velikosti držet v násobcích 48. Materiály mají 5barevné rampy, barevný obrys.
 - Písmo: VT323 všude, Pixelify Sans **jen na logo** (v textu se pletlo Z/2 a 8/S).
 - Musí fungovat na mobilu (testovat šířku 375 px, bez vodorovného posunu).
+- Typy: `// @ts-check` + JSDoc, typy dat v `js/types.d.ts`, `jsconfig.json`. Žádný TS build –
+  kontrola `npx -y -p typescript@5.6.3 tsc -p jsconfig.json`.
+- PWA: `sw.js` (síť napřed, offline z mezipaměti, písma cache-first) + `manifest.webmanifest`,
+  registrace v `js/game.js` jen přes http(s). Nový soubor hry → přidat do `FILES` v `sw.js`.
+  Ikony `icons/` generuje `tools/draw_sprites.py` (`ICON_SPRITE`).
+- Online: GitHub Pages https://tesarik.github.io/ministrex/ z větve `main`; CI `.github/workflows/check.yml`.
 - Debug: `window.__ministrex.state()`.
 
 ## Grafika a licence
@@ -42,5 +48,5 @@ S uživatelem komunikuj česky.
 - Server: `python3 -m http.server 8000` ve složce projektu (dostupné i přes Wi‑Fi).
 - Headless: `google-chrome --headless=new --screenshot=… --window-size=375,900 URL`,
   pomocné stránky dávat do scratchpadu, ne do projektu.
-- Po změně dat ověřit, že všechny položky/obrázky/části existují a každá položka je použitá;
-  `node --check js/game.js`.
+- Po změně dat: `node tools/check.js` (položky/obrázky/části existují, každá položka je použitá,
+  seznam v `sw.js`, verze v README) + kontrola typů výše; `node --check js/game.js`.

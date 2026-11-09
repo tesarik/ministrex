@@ -1,3 +1,4 @@
+// @ts-check
 /* MINISTREX – hlavní logika hry */
 (function () {
   'use strict';
@@ -473,7 +474,7 @@
     clearTimer();
     const q = G.qs[G.idx];
     const ok = i >= 0 && q.options[i].correct;
-    const btns = [...document.querySelectorAll('.opt')];
+    const btns = /** @type {HTMLButtonElement[]} */ ([...document.querySelectorAll('.opt')]);
     btns.forEach((b, j) => {
       b.disabled = true;
       if (q.options[j].correct) b.classList.add('correct');
@@ -665,4 +666,10 @@
   document.documentElement.style.setProperty('--tex-deep', `url(${SP.texture('deep', 2)})`);
   window.__ministrex = { state: () => G }; // ladění
   showTitle();
+
+  // instalace do mobilu + offline (sw.js); z file:// to prohlížeče nepovolí, hra jede i bez toho
+  if (location.protocol.startsWith('http') && 'serviceWorker' in navigator) {
+    document.head.append(h('link', { rel: 'manifest', href: 'manifest.webmanifest' }));
+    navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Service worker:', e));
+  }
 })();
