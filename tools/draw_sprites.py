@@ -176,6 +176,8 @@ C = Canvas  # zkratka pro tvary
 
 
 # ======================= PŘEDMĚTY =======================
+
+
 def kalich(c):
     c.paint(C.lathe([(3, 10.5), (6, 10.5), (10, 9.5), (13, 7.5), (15, 5), (16, 3)]), 'gold')
     c.paint(C.ellipse(16, 3.6, 9.5, 1.3), 'gold', 1)                 # otvor kalicha
@@ -301,22 +303,36 @@ def kadidelnice(c):
 
 
 def lodka(c):
-    hull = C.ellipse(16, 13, 14.5, 8.5) & C.rect(0, 13, 31, 31)
-    c.paint(hull, 'gold')
-    c.paint(C.poly([(1, 8), (5, 13), (1, 13)]) | C.poly([(31, 8), (27, 13), (31, 13)]), 'gold', 3)
-    c.paint(C.rect(2, 13, 29, 14), 'gold', 'vgrad', edge=True)
-    c.paint(C.lathe([(22, 2), (24, 3.5), (26, 7)]), 'gold', 'cyl', edge=True)
-    c.paint(C.line(18, 12, 26, 4), 'silver', 2)
-    c.paint(C.ellipse(27, 3.5, 2.4, 1.8), 'silver', 'sphere')
+    # protáhlá nádobka tvaru lodi na nožce; přední polovina víčka odklopená, lžička
+    c.paint(C.lathe([(26, 2.5), (28, 2.5), (30, 6), (31, 6.5)]), 'gold', 'cyl', edge=True)   # nožka
+    hull = C.poly([(0, 11), (4, 15), (28, 15), (32, 11), (29, 19), (23, 24.5), (9, 24.5), (3, 19)])
+    c.paint(hull, 'gold', 'vgrad')
+    c.paint(C.poly([(2, 13), (4, 15), (28, 15), (30, 13), (28, 16), (4, 16)]), 'gold', 4)    # okraj
+    c.paint(C.poly([(16, 15), (27, 15), (29, 13), (28, 11), (17, 13.5)]), 'gold', 'vgrad', edge=True)  # zavřená půlka víčka
+    c.paint(C.ellipse(10, 15, 5.5, 1), 'wood', 2)                                     # zrnka kadidla
+    for x in (7, 10, 13):
+        c.paint(C.rect(x, 15, x, 15), 'flame', 3)
+    c.paint(C.poly([(15, 14), (5, 3), (9, 1), (17, 13)]), 'gold', 'cyl', edge=True)   # odklopená půlka
+    c.paint(C.line(20, 6, 26, 12), 'silver', 2)                                       # lžička
+    c.paint(C.ellipse(19, 4.5, 2.4, 1.7), 'silver', 'sphere')
 
 
 def kropenka(c):
-    # nádobka na svěcenou vodu u vchodu do kostela (na zdi)
-    c.paint(C.ellipse(16, 8, 8, 6) | C.rect(8, 8, 23, 21), 'stone', 'flat')
-    c.paint(C.rect(15, 5, 16, 14) | C.rect(12, 7, 19, 8), 'gold', 'cyl')
-    c.paint(C.ellipse(16, 20, 12, 8) & C.rect(0, 20, 31, 31), 'stone', 'cyl', edge=True)
-    c.paint(C.ellipse(16, 20.5, 10, 1.6), 'water', 2)
-    c.paint(C.lathe([(28, 2.5), (30, 1)]), 'stone', 'cyl')
+    # nádobka na svěcenou vodu připevněná na zdi u vchodu do kostela
+    c.paint(C.rect(3, 0, 28, 31), 'stone', 1)                                       # zeď
+    for y in (7, 15, 23):
+        c.paint(C.rect(3, y, 28, y), 'stone', 0)
+    for y, xs in ((0, (12,)), (8, (7, 20)), (16, (12, 24)), (24, (8, 19))):
+        for x in xs:
+            c.paint(C.rect(x, y, x, y + 6), 'stone', 0)
+    c.paint(C.rect(15, 3, 16, 12) | C.rect(12, 5, 19, 6), 'gold', 'cyl')            # křížek nad ní
+    shell = C.ellipse(16, 17, 10, 9) & C.rect(0, 17, 31, 31)
+    c.paint(shell, 'cloth', 'cyl', edge=True)                                        # mušle
+    for x in (10, 13, 16, 19, 22):
+        c.paint(C.line(16, 25, x, 18), 'cloth', 1)
+    c.paint(C.ellipse(16, 17.3, 9.5, 1.8), 'water', 'vgrad')                         # hladina
+    c.paint(C.rect(11, 17, 13, 17), 'water', 4)
+    c.paint(C.ellipse(23.5, 22, .9, 1.4) | C.ellipse(25, 27, .7, 1.1), 'water', 3)   # kapky
 
 
 def monstrance(c):
@@ -390,11 +406,12 @@ def ciboriove_velum(c):
 
 
 def pixida(c):
-    # neprůhledná schránka podobná monstranci, bez paprsků
+    # jako monstrance, ale místo okénka a paprsků zavřená hladká schránka
     c.paint(C.rect(15, 0, 16, 4) | C.rect(13, 1, 18, 2), 'gold', 'cyl')
-    c.paint(C.ellipse(16, 11.5, 8, 8), 'gold', 'sphere')
-    c.paint(C.ellipse(16, 11.5, 5.5, 5.5), 'gold', 2, edge=True)
-    c.paint(C.rect(15, 8, 16, 15) | C.rect(13, 10, 18, 11), 'gold', 1)
+    c.paint(C.ellipse(16, 11.5, 7.5, 7.5), 'gold', 'sphere')
+    c.paint(C.ellipse(16, 11.5, 6, 6) - C.ellipse(16, 11.5, 5, 5), 'gold', 1)        # spára víčka
+    c.paint(C.rect(23, 10, 24, 13), 'gold', 1)                                       # zámek
+    c.paint(C.rect(7, 10, 8, 13), 'gold', 0)                                         # pant
     c.paint(C.rect(15, 19, 16, 27), 'gold')
     c.paint(C.ellipse(16, 23, 3, 1.6), 'gold', 'cyl', edge=True)
     c.paint(C.lathe([(27, 3), (29, 7), (31, 9)]), 'gold', 'cyl', edge=True)
@@ -479,6 +496,8 @@ def zpovednice(c):
 
 
 # ======================= ROUCHA =======================
+
+
 def mirror(pts):
     return [(31 - x, y) for x, y in pts]
 
@@ -530,10 +549,13 @@ def klerika(c):
 
 
 def humeral(c):
-    c.paint(C.line(6, 9, 1, 27) | C.line(25, 9, 30, 27), 'cloth', 1)      # tkanice
-    c.paint(C.rect(6, 7, 25, 20), 'cloth', 'flat')
-    c.paint(C.rect(6, 7, 25, 8), 'cloth', 3)
-    c.paint(C.rect(15, 10, 16, 14) | C.rect(13, 11, 18, 12), 'red', 2)
+    # čtyřhranný šátek s tkanicemi, v rohu malý křížek
+    c.paint(C.poly([(16, 2), (29, 15), (16, 28), (3, 15)]), 'cloth', 'vgrad')        # šátek na kosočtverec
+    c.paint(C.line(16, 3, 28, 15) | C.line(16, 3, 4, 15), 'cloth', 4)
+    c.paint(C.rect(15, 6, 16, 11) | C.rect(13, 7, 18, 8), 'red', 2)                  # křížek
+    for pts in ([(4, 15), (2, 20), (4, 24), (2, 30)], [(28, 15), (30, 20), (28, 24), (30, 30)]):
+        for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+            c.paint(C.line(ax, ay, bx, by), 'cloth', 1)                              # tkanice
 
 
 def cingulum(c):
@@ -594,17 +616,36 @@ def biret(c):
 
 
 def velum(c):
-    band = [(1, 12), (10, 9), (20, 12), (31, 8), (31, 17), (20, 21), (10, 18), (1, 21)]
-    c.paint(C.poly(band), 'cloth', 'vgrad')
-    c.paint(C.poly([(1, 12), (3, 11.5), (3, 20.5), (1, 21)]) | C.poly([(29, 8.5), (31, 8), (31, 17), (29, 17.5)]), 'gold', 3)
-    c.paint(C.rect(15, 11, 16, 18) | C.rect(13, 13, 18, 14), 'gold', 'cyl')
+    # široký zdobený pás: zlatý lem, třásně, uprostřed paprsčitý znak, spony
+    c.paint(C.poly([(1, 23), (16, 20), (31, 23), (31, 27), (16, 24), (1, 27)]), 'gold', 2)   # třásně
+    for x in range(2, 31, 2):
+        y = 23 - (x if x <= 16 else 32 - x) * 3 / 15
+        c.paint(C.rect(x, y + 1, x, y + 3), 'gold', 1)
+    band = C.poly([(1, 9), (16, 6), (31, 9), (31, 24), (16, 21), (1, 24)])
+    c.paint(band, 'cloth', 'vgrad')
+    c.paint(C.poly([(1, 9), (16, 6), (31, 9), (31, 11), (16, 8), (1, 11)]), 'gold', 3)
+    c.paint(C.poly([(1, 22), (16, 19), (31, 22), (31, 24), (16, 21), (1, 24)]), 'gold', 2)
+    for i in range(8):
+        a = math.radians(i * 45)
+        c.paint(C.line(16, 14, 16 + 5 * math.cos(a), 14 + 4.5 * math.sin(a)), 'gold', 3)
+    c.paint(C.ellipse(16, 14, 2.4, 2.4), 'gold', 'sphere')
+    c.paint(C.rect(5, 14, 7, 16) | C.rect(25, 14, 27, 16), 'gold', 'sphere')          # spony
 
 
 def vimpa(c):
-    # bílý nezdobený pás
-    band = [(1, 12), (10, 9), (20, 12), (31, 8), (31, 17), (20, 21), (10, 18), (1, 21)]
-    c.paint(C.poly(band), 'cloth', 'vgrad')
-    c.paint(C.line(10, 10, 10, 17) | C.line(20, 13, 20, 20), 'cloth', 1)
+    # dlouhý úzký bílý pruh bez ozdob, volně zvlněný (srovnej se zdobeným velem)
+    def band(y0, half):
+        m = set()
+        for i in range(0, 61):
+            x = 1 + i * .5
+            y = y0 + 6 * math.sin((x - 1) / 30 * 2 * math.pi)
+            m |= C.rect(x, y - half, x, y + half)
+        return m
+    c.paint(band(15, 4.5), 'cloth', 'vgrad')
+    for x in (9, 23):
+        y = 15 + 6 * math.sin((x - 1) / 30 * 2 * math.pi)
+        c.paint(C.line(x - 1, y - 4, x + 1, y + 4), 'cloth', 1)                       # sklady
+    c.paint(band(11.5, .6) & C.rect(0, 0, 31, 31), 'cloth', 4)                        # odlesk na hraně
 
 
 def solideo(c):
@@ -616,11 +657,16 @@ def solideo(c):
 
 
 def mitra(c):
-    c.paint(C.rect(10, 22, 12, 31) | C.rect(19, 22, 21, 31), 'cloth', 'cyl')
-    c.paint(C.rect(10, 29, 12, 31) | C.rect(19, 29, 21, 31), 'gold', 3)
-    c.paint(C.poly([(16, 0), (25, 9), (25, 23), (6, 23), (6, 9)]), 'cloth', 'cyl')
-    c.paint(C.rect(6, 19, 25, 23), 'gold', 'vgrad', edge=True)
-    c.paint(C.rect(15, 6, 16, 15) | C.rect(12, 8, 19, 9), 'gold', 'cyl')
+    # vysoká špičatá mitra; ze zadu za ní vlají do strany dva úzké cípy (infule)
+    for pts, sh in (([(18, 13), (31, 19), (31, 23), (18, 18)], 1),
+                    ([(18, 18), (30, 26), (29, 30), (18, 23)], 2)):
+        c.paint(C.poly(pts), 'cloth', sh)
+        (ax, ay), (bx, by) = pts[1], pts[2]
+        c.paint(C.poly([(ax - 2, ay - .8), (ax, ay), (bx, by), (bx - 2, by - .8)]), 'gold', 2)   # třásně
+    c.paint(C.poly([(12, 0), (21, 10), (20, 29), (4, 29), (3, 10)]), 'cloth', 'cyl')    # štít
+    c.paint(C.rect(4, 25, 20, 29), 'gold', 'vgrad', edge=True)                         # čelenka
+    c.paint(C.poly([(12, 0), (13, 1), (13, 25), (11, 25), (11, 1)]), 'gold', 'cyl')    # svislý pruh
+    c.paint(C.rect(7, 11, 16, 12), 'gold', 3)
 
 
 def berla(c):
@@ -659,6 +705,8 @@ def pallium(c):
 
 
 # ======================= POSTOJE A GESTA =======================
+
+
 def head(c, x, y, face='right'):
     c.paint(C.ellipse(x, y, 3.2, 3.4), 'skin', 'sphere')
     c.paint(C.ellipse(x - (.6 if face == 'right' else 0), y - 1.4, 3.5, 2.4) & C.rect(0, 0, 31, int(y - 1)), 'hair', 2)
@@ -797,6 +845,8 @@ def chuze(c):
 
 
 # ======================= LITURGICKÉ BARVY A ROK =======================
+
+
 def make_ornat(mat, band='gold'):
     def f(c):
         c.paint(C.poly([(9, 2), (23, 2), (28, 10), (28, 24), (24, 30), (8, 30), (4, 24), (4, 10)]), mat, 'cyl')
@@ -828,17 +878,21 @@ def adventni_venec(c):
 
 
 def vanoce(c):
+    # jesličky se zavinutým děťátkem, nad nimi betlémská hvězda
     star = []
     for i in range(10):
         a = math.radians(-90 + i * 36)
-        r = 7 if i % 2 == 0 else 3
-        star.append((12 + r * math.cos(a), 9 + r * math.sin(a)))
-    c.paint(C.poly([(16, 9), (31, 15), (31, 19), (16, 12)]), 'gold', 'vgrad')    # ohon
+        r = 6.5 if i % 2 == 0 else 2.7
+        star.append((16 + r * math.cos(a), 7 + r * math.sin(a)))
     c.paint(C.poly(star), 'gold', 'sphere')
-    c.paint(C.poly([(8, 24), (25, 24), (22, 30), (11, 30)]), 'wood', 'vgrad', edge=True)  # jesle
-    c.paint(C.ellipse(16.5, 23.5, 8, 2.2), 'gold', 3)                        # sláma
-    c.paint(C.ellipse(16.5, 22, 3, 2), 'cloth', 'sphere')                     # zavinuté děťátko
-    c.paint(C.ellipse(17.5, 21.5, 1.3, 1.3), 'skin', 2)
+    for a in (200, 340):
+        c.paint(C.line(16, 7, 16 + 9 * math.cos(math.radians(a)), 7 - 4 * math.sin(math.radians(a))), 'gold', 3)
+    c.paint(C.line(5, 31, 12, 20) | C.line(27, 31, 20, 20) | C.line(27, 20, 20, 31) | C.line(5, 20, 12, 31), 'wood', 2)  # nožky do X
+    c.paint(C.poly([(4, 18), (28, 18), (24, 26), (8, 26)]), 'wood', 'vgrad', edge=True)  # žlab
+    for x in range(5, 28, 3):
+        c.paint(C.line(x, 18, x + 1, 15), 'gold', 3)                                  # sláma
+    c.paint(C.ellipse(17, 17, 6, 2.6), 'cloth', 'sphere')                             # zavinutí
+    c.paint(C.ellipse(12, 16.5, 2.2, 2.2), 'skin', 'sphere')                          # hlavička
 
 
 def popelec(c):
