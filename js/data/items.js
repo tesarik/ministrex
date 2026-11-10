@@ -24,10 +24,10 @@ window.MC_DATA.items = {
   },
   patena: {
     name: 'Paténa',
-    desc: 'Mělký talířek, na kterém leží hostie, kterou kněz při mši proměňuje.',
-    clue: 'Plochý zlatý talířek, na kterém leží velká hostie.',
-    use: 'Leží na ní hostie, kterou kněz proměňuje',
-    zdroj: 'Hněvošice 2018',
+    desc: 'Zlacený talířek, který ministrant při svatém přijímání drží pod bradou přijímajícího, aby hostie ani její úlomek nespadly na zem.',
+    clue: 'Plochý zlatý talířek, který ministrant drží při svatém přijímání.',
+    use: 'Drží se pod bradou při svatém přijímání',
+    zdroj: 'Dolní Újezd 2019',
   },
   konvicky: {
     name: 'Konvičky',
