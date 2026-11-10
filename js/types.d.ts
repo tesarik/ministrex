@@ -56,6 +56,10 @@ interface MCLevel {
   premiumCount: number;
   premium: MCPremium[];
   prompts?: MCPrompts;
+  /** jen procvičování chyb: znění otázek podle domovského levelu, nic se neukládá */
+  practice?: boolean;
+  /** jen procvičování: odkud brát špatné odpovědi */
+  pool?: string[];
 }
 
 interface MCSection {
@@ -120,6 +124,8 @@ interface MCAudio {
 interface MCSave {
   levels: Record<string, { stars?: number; best?: number }>;
   collected: Record<string, boolean>;
+  /** spletené předměty: id → 1–3 (správná odpověď ubere 1) */
+  miss: Record<string, number>;
   muted?: boolean;
   /** vypnutý časový limit → bez bonusu za rychlost */
   noTimer?: boolean;

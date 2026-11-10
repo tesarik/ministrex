@@ -9,7 +9,7 @@
   const SFX = window.MC_AUDIO;
   const app = document.getElementById('app');
 
-  const VERSION = '0.1.0';
+  const VERSION = '0.2.0';
 
   const CFG = {
     lives: 3,
@@ -27,9 +27,9 @@
   function loadSave() {
     try {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || localStorage.getItem(OLD_SAVE_KEY));
-      if (s && s.levels) return { collected: {}, ...s };
+      if (s && s.levels) return { collected: {}, miss: {}, ...s };
     } catch (e) { /* bez úložiště */ }
-    return { levels: {}, collected: {}, muted: false };
+    return { levels: {}, collected: {}, miss: {}, muted: false };
   }
   function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* ignore */ } }
   const save = loadSave();
@@ -53,6 +53,8 @@
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const sample = (a, n) => shuffle(a).slice(0, n);
   const lcFirst = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+  // české skloňování podle počtu: plural(3, 'level', 'levely', 'levelů') → '3 levely'
+  const plural = (n, one, few, many) => `${n} ${n === 1 ? one : n >= 2 && n <= 4 ? few : many}`;
   // obrázek předmětu – předmět může sdílet obrázek jiného (pole `sprite` v items.js)
   const spr = (id) => (ITEMS[id] && ITEMS[id].sprite) || id;
 
@@ -63,7 +65,8 @@
     purpose: 'Který předmět to popisuje?',
     use: 'K čemu slouží {name_lc}?',
   };
-  function prompt(sec, level, type, it) {
+  function prompt(sec, level, type, it, id) {
+    if (level.practice && id && HOME[id]) ({ sec, level } = HOME[id]);
     const t = (level.prompts && level.prompts[type]) || (sec.prompts && sec.prompts[type]) || DEFAULT_PROMPTS[type];
     return t.replace('{name}', it ? it.name : '').replace('{name_lc}', it ? lcFirst(it.name) : '');
   }
@@ -83,16 +86,27 @@
     return wrap;
   }
 
+  // kde je předmět doma (první level, kde se objeví) – pro znění otázek při procvičování
+  /** @type {Record<string, {sec: MCSection, level: MCLevel}>} */
+  const HOME = {};
+  SECTIONS.forEach((sec) => (sec.levels || []).forEach((level) => (level.items || []).forEach((id) => {
+    if (!HOME[id]) HOME[id] = { sec, level };
+  })));
+
   function allLevels() {
     const out = [];
     SECTIONS.forEach((s) => { if (!s.comingSoon) s.levels.forEach((l) => out.push({ section: s, level: l })); });
     return out;
   }
+  // odemčené je vše do prvního levelu za nejdál dokončeným – když přibude level doprostřed,
+  // hráčům se nezamknou levely, které už hráli
   function isUnlocked(levelId) {
     const all = allLevels();
     const i = all.findIndex((x) => x.level.id === levelId);
     if (i <= 0) return true;
-    return (save.levels[all[i - 1].level.id]?.stars || 0) > 0;
+    let maxDone = -1;
+    all.forEach((x, j) => { if ((save.levels[x.level.id]?.stars || 0) > 0) maxDone = j; });
+    return i <= maxDone + 1;
   }
   const totalScore = () => Object.values(save.levels).reduce((a, l) => a + (l.best || 0), 0);
   const totalStars = () => Object.values(save.levels).reduce((a, l) => a + (l.stars || 0), 0);
@@ -157,6 +171,7 @@
         btn('Hrát', showMap, 'big'),
         btn('Sbírka', showCollection),
         btn('Jak hrát', showHelp),
+        btn('Záloha postupu', showBackup),
         timerToggle()),
       h('p', { class: 'footer' }, `verze ${VERSION}`)
     );
@@ -175,6 +190,8 @@
         h('li', {}, SP.img('kalich', 48), ' Každý správně poznaný předmět, roucho nebo gesto se ti uloží do sbírky.'),
         h('li', {}, SP.img('misal', 48), ' V sekci Průběh mše skládáš části mše ve správném pořadí a hádáš, jak se při nich stojí, sedí nebo klečí.'),
         h('li', {}, SP.img('lock', 22), ' Dokonči level a odemkne se další. Hvězdy: 3 = bez chyby.'),
+        h('li', {}, '🎯 Co spleteš, si hra pamatuje: na mapě to můžeš procvičit a v dalších hrách se to objevuje častěji.'),
+        h('li', {}, '💾 Postup je uložený jen v tomhle prohlížeči. Přes Záloha postupu si ho přeneseš na jiné zařízení.'),
         h('li', {}, '⌨️ Odpovídat můžeš i klávesami 1–4, pokračovat Enterem.')),
       h('div', { class: 'row' }, btn('◀ Zpět', showTitle))));
     keyHandler = (e) => { if (e.key === 'Escape' || e.key === 'Enter') showTitle(); };
@@ -189,6 +206,12 @@
         h('span', {}, SP.img('star', 20), ' ', totalStars()),
         h('span', {}, SP.img('gem', 20), ' ', totalScore())),
       muteBtn());
+    const missed = missedIds();
+    const practiceBar = missed.length
+      ? h('div', { class: 'practice-bar panel' },
+        h('span', {}, `🎯 Spletené předměty: ${missed.length}`),
+        btn('Procvičit', () => startPractice(missed), 'small primary'))
+      : null;
 
     const sections = SECTIONS.map((sec) => {
       const head = h('div', { class: 'sec-head' },
@@ -214,7 +237,7 @@
       return h('div', { class: 'section panel' }, head, h('div', { class: 'levels' }, levels));
     });
 
-    screen('map', header, h('div', { class: 'sections' }, sections));
+    screen('map', header, practiceBar, h('div', { class: 'sections' }, sections));
     keyHandler = (e) => { if (e.key === 'Escape') showTitle(); };
   }
 
@@ -256,11 +279,11 @@
   }
 
   function makeQuestion(sec, level, type, id) {
-    const levelIds = level.items;
+    const levelIds = level.pool || level.items;
     const it = ITEMS[id];
     const opts = shuffle([id, ...distractors(id, levelIds)]);
     const base = { type, itemId: id, premium: false, fb: { sprite: spr(id), title: it.name, text: it.desc } };
-    const P = (t) => prompt(sec, level, t, it);
+    const P = (t) => prompt(sec, level, t, it, id);
     switch (type) {
       case 'identify':
         return { ...base, prompt: P('identify'), sprite: spr(id),
@@ -325,9 +348,12 @@
     } else {
       const ids = level.items;
       const n = level.questionCount ?? 8;
+      // spletené předměty dostanou volná místa navíc přednostně
+      const missed = shuffle(ids.filter((id) => save.miss[id]));
       let order = shuffle(ids);
+      if (order.length < n) order = order.concat(missed.slice(0, n - order.length));
       while (order.length < n) order = order.concat(shuffle(ids));
-      order = order.slice(0, n);
+      order = shuffle(order.slice(0, n));
       const types = shuffle(Array.from({ length: n }, (_, i) => ['identify', 'find', 'purpose', 'use'][i % 4]));
       qs = order.map((id, i) => makeQuestion(sec, level, types[i], id));
     }
@@ -351,7 +377,7 @@
     G = {
       sec, level, qs: buildQuestions(sec, level), idx: 0,
       lives: CFG.lives, score: 0, streak: 0, bestStreak: 0, correct: 0, lost: 0,
-      found: new Set(), answered: false,
+      found: new Set(), wrong: new Set(), answered: false,
     };
     SFX.start();
     renderQuestion();
@@ -494,12 +520,19 @@
         else { pts += CFG.fullHealBonus; extra = ` (+${CFG.fullHealBonus} za plné zdraví)`; }
       }
       G.score += pts;
-      if (q.itemId) G.found.add(q.itemId);
+      if (q.itemId) {
+        G.found.add(q.itemId);
+        if (save.miss[q.itemId] && --save.miss[q.itemId] <= 0) delete save.miss[q.itemId];
+      }
       title = `Správně! +${pts}${extra}`;
       SFX.correct();
       popup('+' + pts, q.premium ? 'gold' : '');
     } else {
       G.streak = 0;
+      if (q.itemId) {
+        G.wrong.add(q.itemId);
+        save.miss[q.itemId] = Math.min((save.miss[q.itemId] || 0) + 1, 3);
+      }
       if (!q.premium) {
         G.lives--;
         G.lost++;
@@ -533,7 +566,7 @@
       body,
       btn(dead ? 'Pokračovat…' : last ? 'Výsledky ▶' : 'Další otázka ▶', next, 'primary'));
     fb.classList.add('show');
-    fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    fb.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   }
 
   function next() {
@@ -555,6 +588,7 @@
 
   // ---------- VÝSLEDKY ----------
   function showResult() {
+    if (G.level.practice) return showPracticeResult();
     const stars = G.lost === 0 ? 3 : G.lost === 1 ? 2 : 1;
     const prev = save.levels[G.level.id] || {};
     const newBest = G.score > (prev.best || 0);
@@ -574,6 +608,7 @@
           h('div', {}, 'Správně: ', h('b', {}, `${G.correct} / ${G.qs.length}`)),
           h('div', {}, 'Nejdelší série: ', h('b', {}, G.bestStreak)),
           h('div', {}, 'Ztracené životy: ', h('b', {}, G.lost))),
+        practiceBtn(),
         h('div', { class: 'row' },
           btn('◀ Mapa', showMap),
           btn('↻ Znovu', () => startLevel(sec, level)),
@@ -592,10 +627,115 @@
         h('div', { class: 'go-candle' }, SP.img('svice', 96, { map: SP.hideMat('flame') })),
         h('p', {}, 'Došly ti životy. Skóre: ', h('b', {}, G.score)),
         h('div', { class: 'menu' },
-          btn('↻ Zkusit znovu', () => startLevel(sec, level), 'primary'),
-          btn('📖 Zpět do učebny', () => showStudy(sec, level)),
+          level.practice ? null : btn('↻ Zkusit znovu', () => startLevel(sec, level), 'primary'),
+          practiceBtn(),
+          level.practice ? null : btn('📖 Zpět do učebny', () => showStudy(sec, level)),
           btn('Mapa', showMap))));
-    keyHandler = (e) => { if (e.key === 'Enter') startLevel(sec, level); };
+    keyHandler = (e) => { if (e.key === 'Enter') { if (level.practice) showMap(); else startLevel(sec, level); } };
+  }
+
+  // ---------- PROCVIČOVÁNÍ CHYB ----------
+  const missedIds = () => Object.keys(save.miss || {}).filter((id) => ITEMS[id] && HOME[id]);
+
+  // tlačítko „procvičit, co jsem právě spletl“ (výsledky / konec hry)
+  function practiceBtn() {
+    const ids = [...G.wrong].filter((id) => HOME[id]);
+    if (!ids.length) return null;
+    return btn(`🎯 Procvičit spletené (${ids.length})`, () => startPractice(ids), 'primary');
+  }
+
+  function startPractice(ids) {
+    ids = sample(ids, 8);
+    const pool = [...new Set(ids.flatMap((id) => HOME[id].level.items))];
+    /** @type {MCSection} */
+    const sec = { id: 'procvicovani', title: 'Procvičování', icon: 'star', desc: '', levels: [] };
+    /** @type {MCLevel & {practice: boolean, pool: string[]}} */
+    const level = { id: 'procvicovani', title: 'Spletené předměty', intro: '', items: ids, pool,
+      questionCount: Math.min(Math.max(ids.length * 2, 4), 10), premiumCount: 0, premium: [], practice: true };
+    startLevel(sec, level);
+  }
+
+  function showPracticeResult() {
+    commitFound();
+    persist();
+    SFX.win();
+    const left = missedIds().length;
+    screen('result',
+      h('div', { class: 'panel result-panel' },
+        h('h2', {}, 'Procvičeno!'),
+        h('div', { class: 'result-stats' },
+          h('div', {}, 'Správně: ', h('b', {}, `${G.correct} / ${G.qs.length}`)),
+          h('div', {}, 'Ještě k procvičení: ', h('b', {}, left))),
+        h('p', {}, left ? 'Co jsi spletl(a), se ti v testech bude objevovat častěji.' : 'Výborně, všechno spletené máš opravené!'),
+        h('div', { class: 'row' },
+          btn('◀ Mapa', showMap),
+          left ? btn('↻ Ještě jednou', () => startPractice(missedIds()), 'primary') : null)));
+    keyHandler = (e) => { if (e.key === 'Enter' || e.key === 'Escape') showMap(); };
+  }
+
+  // ---------- ZÁLOHA POSTUPU ----------
+  // kód = „MX1:“ + base64 z JSON uložení; žádný server, jen kopírování textu
+  const CODE_PREFIX = 'MX1:';
+  function exportCode() {
+    const bytes = new TextEncoder().encode(JSON.stringify(save));
+    let bin = '';
+    bytes.forEach((b) => { bin += String.fromCharCode(b); });
+    return CODE_PREFIX + btoa(bin);
+  }
+  function importCode(code) {
+    code = code.replace(/\s+/g, '');
+    if (!code.startsWith(CODE_PREFIX)) throw new Error('Kód musí začínat ' + CODE_PREFIX);
+    const bin = atob(code.slice(CODE_PREFIX.length));
+    const data = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
+    if (!data || typeof data.levels !== 'object') throw new Error('V kódu není uložený postup.');
+    return data;
+  }
+
+  function showBackup() {
+    const code = exportCode();
+    const out = /** @type {HTMLTextAreaElement} */ (h('textarea', { class: 'code-box', readonly: true, rows: 4, 'aria-label': 'Kód postupu' }));
+    out.value = code;
+    const msg = h('p', { class: 'backup-msg', role: 'status' });
+    const say = (t, bad) => { msg.textContent = t; msg.classList.toggle('bad', !!bad); };
+    const copy = btn('📋 Zkopírovat kód', () => {
+      out.select();
+      const done = () => say('Zkopírováno. Pošli si ho (zpráva, e-mail) a vlož na druhém zařízení.');
+      if (navigator.clipboard) navigator.clipboard.writeText(code).then(done, () => say('Kód je označený – zkopíruj ho ručně.'));
+      else { try { document.execCommand('copy'); done(); } catch (e) { say('Kód je označený – zkopíruj ho ručně.'); } }
+    }, 'primary');
+
+    const inp = /** @type {HTMLTextAreaElement} */ (h('textarea', { class: 'code-box', rows: 4, placeholder: CODE_PREFIX + '…', 'aria-label': 'Vložit kód postupu' }));
+    let armed = null;
+    const load = btn('Načíst postup', () => {
+      let data;
+      try { data = importCode(inp.value); } catch (e) { say('Kód se nepodařilo načíst: ' + e.message, true); return; }
+      const n = Object.keys(data.levels).length;
+      if (!armed) { // druhé klepnutí potvrdí (bez blokujícího dialogu)
+        say(`Kód obsahuje ${plural(n, 'rozehraný level', 'rozehrané levely', 'rozehraných levelů')}. Tím přepíšeš postup v tomto zařízení – klepni znovu pro potvrzení.`, true);
+        armed = setTimeout(() => { armed = null; }, 5000);
+        return;
+      }
+      clearTimeout(armed); armed = null;
+      for (const k of Object.keys(save)) delete save[k];
+      Object.assign(save, { levels: {}, collected: {}, miss: {} }, data);
+      SFX.muted = !!save.muted;
+      persist();
+      const c = Object.keys(save.collected).length;
+      say(`Načteno – ${plural(n, 'level', 'levely', 'levelů')}, ve sbírce ${plural(c, 'předmět', 'předměty', 'předmětů')}.`);
+    });
+
+    screen('backup', h('div', { class: 'panel' },
+      h('h2', {}, '💾 Záloha postupu'),
+      h('p', {}, 'Postup se ukládá jen v tomto prohlížeči. Chceš hrát jinde, nebo se bojíš o hvězdy? Zkopíruj si kód.'),
+      h('h3', {}, 'Tvůj kód'),
+      out,
+      h('div', { class: 'row' }, copy),
+      h('h3', {}, 'Načíst kód z jiného zařízení'),
+      inp,
+      h('div', { class: 'row' }, load),
+      msg,
+      h('div', { class: 'row' }, btn('◀ Zpět', showTitle))));
+    keyHandler = (e) => { if (e.key === 'Escape') showTitle(); };
   }
 
   // ---------- SBÍRKA ----------

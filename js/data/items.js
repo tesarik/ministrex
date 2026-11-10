@@ -59,9 +59,17 @@ window.MC_DATA.items = {
   },
   misal: {
     name: 'Misál',
-    desc: 'Velká kniha s modlitbami mše svaté, ze které se kněz modlí u oltáře. Ministrant ji někdy drží knězi při modlitbě.',
+    desc: 'Kniha, která obsahuje všechny potřebné modlitby při mši svaté. Kněz si ji chystá v sakristii. Librista ji drží knězi otevřenou při vstupní a závěrečné modlitbě, po přímluvách ji přinese na oltář.',
     clue: 'Kniha, ze které se kněz modlí modlitby mše u oltáře.',
     use: 'Kniha s modlitbami kněze při mši',
+    zdroj: 'Dolní Újezd 2019',
+  },
+  obetni_miska: {
+    name: 'Obětní miska',
+    desc: 'Miska na hostie, které se při mši svaté proměňují v Tělo Kristovo. Přináší se v obětním průvodu a má být z ušlechtilého materiálu. Před mší ji ministrant připraví s konvičkami.',
+    clue: 'Miska s hostiemi, která se přináší v obětním průvodu.',
+    use: 'Přinášejí se v ní hostie v obětním průvodu',
+    zdroj: 'Dolní Újezd 2019',
   },
 
   // ---------- na oltáři ----------
@@ -109,9 +117,10 @@ window.MC_DATA.items = {
   },
   svice: {
     name: 'Oltářní svíce',
-    desc: 'Při každé mši hoří na oltáři nebo vedle něj svíce (alespoň dvě). Připomínají, že Kristus je světlo světa.',
+    desc: 'Svíce ve svícnech na oltáři připomínají Krista – světlo světa. Na obětním stole mají být alespoň dvě (při slavnostech 4 nebo 6), sedmá se přidává, když koncelebruje sídelní biskup.',
     clue: 'Hoří na oltáři při každé mši a připomíná Krista – světlo světa.',
     use: 'Svítí při mši jako znamení Krista – světla světa',
+    zdroj: 'Dolní Újezd 2019',
   },
 
   // ---------- slavnostní liturgie ----------
@@ -152,9 +161,32 @@ window.MC_DATA.items = {
   },
   kriz: {
     name: 'Procesní kříž',
-    desc: 'Kříž na dlouhé tyči, který nese ministrant v čele průvodu, například při vstupu na začátku mše.',
-    clue: 'Kříž na tyči, který jde v průvodu úplně vpředu.',
-    use: 'Nese se v čele průvodu',
+    desc: 'Kříž na dlouhé tyči. Krucifer ho nese v průvodu mezi dvěma ceroferáři se svícemi, hned za kadidelnicí a loďkou. U oltáře nepoklekne, kříž postaví do stojanu.',
+    clue: 'Kříž na tyči, který nese krucifer v průvodu mezi dvěma svícemi.',
+    use: 'Nese ho krucifer v průvodu mezi dvěma svícemi',
+    zdroj: 'Dolní Újezd 2019',
+  },
+  // ---------- průvody a ostatky (Dolní Újezd 2019) ----------
+  relikviar: {
+    name: 'Relikviář',
+    desc: 'Neboli ostatkář – zdobená schránka, ve které jsou uložené ostatky svatých (například kousek roucha). Používá se třeba při průvodech. Relikviář ve tvaru kříže se nazývá pacifikál.',
+    clue: 'Zdobená schránka s ostatky svatých.',
+    use: 'Uchovávají se v něm ostatky svatých',
+    zdroj: 'Dolní Újezd 2019',
+  },
+  baldachyn: {
+    name: 'Baldachýn',
+    desc: 'Přenosná nebesa – ozdobná látka uchycená na čtyřech nebo šesti tyčích. Nese se nad Nejsvětější svátostí při procesích, třeba o slavnosti Těla a Krve Páně.',
+    clue: 'Ozdobná látka na čtyřech nebo šesti tyčích, nese se nad Nejsvětější svátostí.',
+    use: 'Přenosná nebesa nad Nejsvětější svátostí v průvodu',
+    zdroj: 'Dolní Újezd 2019',
+  },
+  korouhev: {
+    name: 'Korouhev',
+    desc: 'Ozdobná látka připevněná na tyči, často s obrazem světce. Nosí se při průvodech a poutích.',
+    clue: 'Ozdobná látka s obrazem světce na tyči, nosí se na poutích.',
+    use: 'Nese se v průvodech a na poutích',
+    zdroj: 'Dolní Újezd 2019',
   },
 
   // ---------- kostel a jeho místa ----------
@@ -181,9 +213,17 @@ window.MC_DATA.items = {
   },
   lekcionar: {
     name: 'Lekcionář',
-    desc: 'Kniha s biblickými čteními pro mši. Lektor z ní čte u ambonu první a druhé čtení a žalm.',
+    desc: 'Kniha, ze které se při mši předčítají čtení ze Starého a Nového zákona. Před mší ji ministrant odnese na ambon. Má šest dílů a každé první čtení v ní má svůj žalm.',
     clue: 'Kniha s čteními z Bible, ze které lektor čte u ambonu.',
-    use: 'Kniha s biblickými čteními',
+    use: 'Kniha s čteními a žalmy, ministrant ji před mší odnese na ambon',
+    zdroj: 'Dolní Újezd 2019',
+  },
+  evangeliar: {
+    name: 'Evangeliář',
+    desc: 'Slavnostní kniha s výběrem evangelií, většinou pro neděle, slavnosti a svátky. Kněz nebo jáhen ji nese od oltáře k ambonu a ministranti se svícemi jdou po jeho stranách: svíce – kněz – svíce.',
+    clue: 'Zdobená kniha evangelií, kterou kněz nese k ambonu mezi dvěma svícemi.',
+    use: 'Slavnostní kniha evangelií, nese se k ambonu mezi svícemi',
+    zdroj: 'Dolní Újezd 2019',
   },
   svatostanek: {
     name: 'Svatostánek',
@@ -203,7 +243,7 @@ window.MC_DATA.items = {
     name: 'Kropenka',
     desc: 'Nádobka se svěcenou vodou u vchodu do kostela. Při vstupu do ní namočíme prsty a pokřižujeme se – připomínáme si svůj křest.',
     clue: 'Miska se svěcenou vodou hned u dveří kostela.',
-    use: 'Ke pokřižování svěcenou vodou při vstupu do kostela',
+    use: 'K pokřižování svěcenou vodou při vstupu do kostela',
     zdroj: 'Hněvošice 2018',
   },
   krtitelnice: {

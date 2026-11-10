@@ -335,3 +335,26 @@ p { margin: 0 0 .6em; }
 /* přepínač časového limitu */
 .btn.toggle { margin-top: 4px; }
 .btn.toggle.off { filter: saturate(.35) brightness(.85); }
+
+/* procvičování chyb (mapa) */
+.practice-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; font-size: 22px; }
+
+/* záloha postupu */
+.code-box {
+  width: 100%; box-sizing: border-box; font-family: 'Courier New', monospace; font-size: 14px;
+  padding: 8px; border: 3px solid var(--frame); background: var(--panel-inner); color: var(--ink);
+  word-break: break-all; resize: vertical;
+}
+.backup-msg { min-height: 1.2em; color: var(--ok); }
+.backup-msg.bad { color: var(--bad); }
+.result-panel > .btn { margin-top: 12px; }
+
+/* méně pohybu pro ty, kdo si to nastavili v systému */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

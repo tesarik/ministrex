@@ -498,6 +498,77 @@ def zpovednice(c):
 
 # ======================= ROUCHA =======================
 
+def obetni_miska(c):
+    # mělká široká miska na nízké noze, v ní hostie
+    c.paint(C.lathe([(22, 2.5), (24, 3), (26.5, 8), (27.5, 8.5)]), 'gold', 'cyl', edge=True)
+    c.paint(C.lathe([(13, 15), (15, 14.5), (18, 11.5), (21, 6), (22, 3)]), 'gold')
+    c.paint(C.ellipse(16, 13, 15, 3.4), 'gold', 4)
+    c.paint(C.ellipse(16, 13, 13.5, 2.6), 'gold', 1)
+    for x, y in ((8, 12.6), (13.5, 11.6), (19, 11.6), (24, 12.6), (16, 13.6), (10.5, 14), (21.5, 14)):
+        c.paint(C.ellipse(x, y, 3, 1.5), 'cloth', 3)                       # hostie
+        c.paint(C.ellipse(x, y + .9, 3, .6) & C.ellipse(x, y, 3, 1.5), 'cloth', 1)
+
+
+def evangeliar(c):
+    # kniha evangelií ve zdobené zlaté vazbě
+    c.paint(C.rect(24, 3, 27, 28), 'cloth', 'flat')                         # ořízka stránek
+    for y in range(5, 28, 2):
+        c.paint(C.rect(25, y, 26, y), 'cloth', 1)
+    c.paint(C.rect(4, 2, 24, 28), 'gold', 'flat')
+    c.paint(C.rect(6, 4, 22, 26), 'gold', 1)
+    c.paint(C.rect(7, 5, 21, 25), 'gold', 2)
+    c.paint(C.rect(13, 7, 15, 23) | C.rect(9, 11, 19, 13), 'gold', 'cyl', edge=True)   # kříž
+    c.paint(C.ellipse(14, 12, 2, 2), 'red', 'sphere')                       # kámen uprostřed
+    for x, y in ((7.5, 5.5), (20.5, 5.5), (7.5, 24.5), (20.5, 24.5)):
+        c.paint(C.ellipse(x, y, 1.6, 1.6), 'blue', 'sphere')                # rohové kameny
+
+
+def relikviar(c):
+    # zdobená schránka tvaru kapličky s okénkem, za ním ostatek
+    c.paint(C.rect(15, 0, 16, 5) | C.rect(13, 1, 18, 2), 'gold', 'cyl')
+    c.paint(C.poly([(16, 4), (28, 12), (4, 12)]), 'gold', 'vgrad', edge=True)   # stříška
+    c.paint(C.rect(6, 12, 25, 25), 'gold', 'cyl')
+    c.paint(C.rect(9, 14, 22, 23), 'gold', 1)
+    c.paint(C.rect(10, 15, 21, 22), 'glass', 'flat')                        # okénko
+    c.paint(C.ellipse(15.5, 19, 3.5, 2), 'red', 'sphere')                   # polštářek s ostatkem
+    c.paint(C.ellipse(15.5, 18.2, 1.4, 1), 'cloth', 3)
+    c.paint(C.rect(11, 16, 12, 17), 'glass', 4)
+    c.paint(C.rect(4, 25, 27, 27), 'gold', 'vgrad', edge=True)
+    for x in (6, 24):
+        c.paint(C.rect(x, 28, x + 2, 30), 'gold', 2)                        # nožky
+
+
+def baldachyn(c):
+    # přenosná nebesa: ozdobná látka na čtyřech tyčích
+    for x, y0 in ((3, 10), (12, 8), (20, 8), (28, 10)):
+        c.paint(C.rect(x, y0, x + 1, 31), 'gold', 'cyl')                    # tyče
+    c.paint(C.poly([(2, 7), (8, 2), (24, 2), (30, 7)]), 'red', 'vgrad')    # střecha
+    c.paint(C.rect(2, 7, 30, 11), 'red', 'flat')                            # lambrekýn
+    for x in range(2, 30, 4):
+        c.paint(C.ellipse(x + 2, 11.5, 2, 1.6) & C.rect(0, 11, 31, 31), 'red', 2)   # vykrajovaný okraj
+        c.paint(C.rect(x + 2, 12, x + 2, 14), 'gold', 3)                    # třásně
+    c.paint(C.rect(2, 7, 30, 7) | C.rect(2, 10, 30, 10), 'gold', 3)
+    for x in (4, 28):
+        c.paint(C.ellipse(x, 1.5, 1.4, 1.4), 'gold', 'sphere')              # makovice
+    c.paint(C.rect(15, 0, 16, 3), 'gold', 3)
+
+
+def korouhev(c):
+    # ozdobná látka na tyči s příčkou (procesní prapor)
+    c.paint(C.rect(15, 3, 16, 31), 'wood', 'cyl')                           # žerď
+    c.paint(C.rect(15, 0, 16, 3) | C.rect(13, 1, 18, 1), 'gold', 'cyl')     # křížek
+    c.paint(C.rect(6, 5, 25, 6), 'gold', 'vgrad', edge=True)                # příčka
+    for x in (6, 25):
+        c.paint(C.ellipse(x, 5.5, 1.6, 1.6), 'gold', 'sphere')
+    c.paint(C.poly([(7, 7), (24, 7), (24, 24), (20, 21), (15.5, 25), (11, 21), (7, 24)]), 'blue', 'vgrad')
+    c.paint(C.poly([(7, 7), (24, 7), (24, 8), (7, 8)]), 'gold', 3)
+    c.paint(C.ellipse(15.5, 14, 4.5, 4.5), 'gold', 'sphere')                # medailon světce
+    c.paint(C.ellipse(15.5, 14, 3.3, 3.3), 'cloth', 'flat')
+    c.paint(C.ellipse(15.5, 12.6, 1.3, 1.3), 'skin', 2)                     # postava světce
+    c.paint(C.poly([(13.5, 17), (15.5, 14), (17.5, 17)]), 'red', 2)
+    for (ax, ay), (bx, by) in (((7, 24), (11, 21)), ((11, 21), (15.5, 25)), ((15.5, 25), (20, 21)), ((20, 21), (24, 24))):
+        c.paint(C.line(ax, ay, bx, by), 'gold', 3)                          # zlatý lem
+
 
 def mirror(pts):
     return [(31 - x, y) for x, y in pts]
@@ -910,7 +981,8 @@ def mezidobi(c):
         c.paint(C.ellipse(x, y, rx, ry), 'green', 'sphere')
 
 
-ITEMS = [kalich, patena, konvicky, lavabo, abak, zvonky, misal,
+ITEMS = [kalich, patena, konvicky, lavabo, abak, zvonky, misal, obetni_miska, evangeliar,
+         relikviar, baldachyn, korouhev,
          korporal, purifikatorium, pala, kalichove_velum, ciborium, ciboriove_velum, svice,
          kadidelnice, lodka, aspergil, monstrance, pixida, kriz,
          oltar, ambon, sedes, lekcionar, svatostanek, vecne_svetlo,

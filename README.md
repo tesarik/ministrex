@@ -2,7 +2,7 @@
 
 *Sloužit je královské.* (minister = služebník, rex = král)
 
-**Verze 0.1.0**
+**Verze 0.2.0**
 
 Pixelová hra do prohlížeče pro ministranty katolické církve. Hráč poznává liturgické předměty,
 roucha, postoje a gesta, služby ministrantů, průběh mše a liturgické barvy.
@@ -24,7 +24,7 @@ Funguje na počítači i na mobilu, bez instalace a bez internetu (kromě písem
 ## Obsah
 | Sekce | Levely |
 |---|---|
-| Liturgické předměty | Příprava darů · Na oltáři · Slavnostní liturgie |
+| Liturgické předměty | Příprava darů · Na oltáři · Slavnostní liturgie · Průvody a ostatky |
 | Kostel | Presbytář · Celý kostel |
 | Liturgická roucha | Ministrant · Kněz a jáhen · Slavnosti a průvody · Biskup |
 | Postoje a gesta | Postoje · Gesta |
@@ -39,7 +39,11 @@ Funguje na počítači i na mobilu, bez instalace a bez internetu (kromě písem
 - **časový limit lze vypnout** přepínačem na úvodní obrazovce (pak bez bonusu za rychlost)
 - učebna před každým levelem, sbírka objevených předmětů, hvězdy, odemykání levelů
 - tlačítko Opustit během kvízu, ovládání klávesami 1–4 / Enter / Esc
-- postup a nastavení se ukládají do `localStorage` prohlížeče (každé zařízení má svůj)
+- **procvičování chyb**: spletené předměty si hra pamatuje, na mapě a po levelu je jde procvičit
+  a v dalších hrách se objevují častěji (procvičování nemění hvězdy ani rekordy)
+- postup a nastavení se ukládají do `localStorage` prohlížeče (každé zařízení má svůj);
+  **Záloha postupu** na úvodní obrazovce dá kód (`MX1:…`), kterým se postup přenese jinam
+- kdo má v systému zapnuté omezení pohybu, nevidí animace
 
 ## Typy otázek (generují se automaticky z dat)
 `identify` – co je na obrázku · `find` – najdi předmět mezi 4 obrázky ·
@@ -90,6 +94,20 @@ Totéž (a navíc, že `js/sprite-art.js` odpovídá generátoru) spouští GitH
   `{name}` / `{name_lc}` = název předmětu).
 - **Level typu posloupnost** (průběh mše): místo `items` má `steps` (`name`, `part`, `posture`, `desc`,
   volitelně `sprite`) a sekce má `parts`.
+
+## Změny
+**0.2.0**
+- 5 nových předmětů z příručky Dolní Újezd: obětní miska, evangeliář, relikviář, baldachýn,
+  korouhev; nový level *Průvody a ostatky*
+- 49 nových prémiových otázek (každý level má teď 4–8), včetně patronů ministrantů
+- zdroj doplněn u misálu, svící, procesního kříže a lekcionáře (popisy upravené podle příručky)
+- překreslené obrázky: velum, vimpa, humerál, pixida, kropenka, loďka, mitra, Vánoce
+- procvičování chyb, záloha postupu kódem, respektování omezení pohybu
+- instalace do mobilu a hraní offline, hra online na GitHub Pages
+- kontrola dat (`tools/check.js`), kontrola typů, automatická kontrola na GitHubu
+- odemykání levelů podle nejdál dokončeného levelu – nový level nezamkne už hrané
+
+**0.1.0** – první verze
 
 ## Zdroje
 - *Liturgické předměty, oblečení, postoje* – Ministranti Hněvošice 2018 (názvy a podoba)

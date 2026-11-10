@@ -6,9 +6,11 @@ S uživatelem komunikuj česky.
 ## Technika
 - Čistý JavaScript, **bez buildu a bez frameworku** (žádný React/TS). Obyčejné `<script>` tagy,
   hra musí fungovat i z `file://`. Data jsou globály `window.MC_DATA`, `window.MC_SPRITE_ART`.
-- Verze je jen na jednom místě: `VERSION` v `js/game.js` (+ řádek v README). Aktuálně 0.1.0.
+- Verze je jen na jednom místě: `VERSION` v `js/game.js` (+ řádek v README). Aktuálně 0.2.0 (seznam změn v README).
 - Uložení: `localStorage` klíč `ministrex.save.v1` (fallback na starý `minicraft.save.v1`).
-  Nastavení v uložení: `muted`, `noTimer` (vypnutý časový limit → bez bonusu za rychlost).
+  Nastavení v uložení: `muted`, `noTimer` (vypnutý časový limit → bez bonusu za rychlost),
+  `miss` (spletené předměty id → 1–3). Záloha = kód `MX1:` + base64 JSON (Záloha postupu).
+- Odemykání: vše do levelu za nejdál dokončeným (nový level vložený doprostřed nic nezamkne).
 - `js/sprite-art.js` je **generovaný** – měň `tools/draw_sprites.py` a spusť
   `python3 tools/draw_sprites.py [--preview out.png]`. Mřížka návrhu 32, výstup 48×48 (K=1.5);
   zobrazované velikosti držet v násobcích 48. Materiály mají 5barevné rampy, barevný obrys.
