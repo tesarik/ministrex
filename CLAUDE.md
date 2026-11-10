@@ -21,7 +21,8 @@ S uživatelem komunikuj česky.
 - PWA: `sw.js` (síť napřed, offline z mezipaměti, písma cache-first) + `manifest.webmanifest`,
   registrace v `js/game.js` jen přes http(s). Nový soubor hry → přidat do `FILES` v `sw.js`.
   Ikony `icons/` generuje `tools/draw_sprites.py` (`ICON_SPRITE`).
-- Online: GitHub Pages https://tesarik.github.io/ministrex/ z větve `main`; CI `.github/workflows/check.yml`.
+- GitHub Pages jsou **vypnuté** (uživatel nechce nasazovat) – nezapínat bez výslovného pokynu.
+  CI `.github/workflows/check.yml` jen kontroluje, nic nenasazuje.
 - Debug: `window.__ministrex.state()`.
 
 ## Grafika a licence

@@ -9,9 +9,10 @@ roucha, postoje a gesta, služby ministrantů, průběh mše a liturgické barvy
 Funguje na počítači i na mobilu, bez instalace a bez internetu (kromě písem).
 
 ## Spuštění
-- **Online:** https://tesarik.github.io/ministrex/ (GitHub Pages, nasazuje se z větve `main`).
-  Na mobilu jde přes nabídku prohlížeče **Přidat na plochu / Nainstalovat** – pak se otevírá
-  jako aplikace a funguje **i bez internetu** (po prvním otevření je hra i s písmy uložená v telefonu).
+- **Instalace do mobilu:** když se hra otevře přes http(s) (server níže nebo webhosting), jde přes
+  nabídku prohlížeče **Přidat na plochu / Nainstalovat** – pak se otevírá jako aplikace a funguje
+  **i bez internetu** (po prvním otevření je hra i s písmy uložená v telefonu).
+  GitHub Pages jsou zatím vypnuté.
 - **Na počítači:** stačí otevřít `index.html` v prohlížeči.
 - **Přes Wi‑Fi (i pro telefony):** ve složce hry spusť
   ```
@@ -103,7 +104,7 @@ Totéž (a navíc, že `js/sprite-art.js` odpovídá generátoru) spouští GitH
 - zdroj doplněn u misálu, svící, procesního kříže a lekcionáře (popisy upravené podle příručky)
 - překreslené obrázky: velum, vimpa, humerál, pixida, kropenka, loďka, mitra, Vánoce
 - procvičování chyb, záloha postupu kódem, respektování omezení pohybu
-- instalace do mobilu a hraní offline, hra online na GitHub Pages
+- instalace do mobilu a hraní offline
 - kontrola dat (`tools/check.js`), kontrola typů, automatická kontrola na GitHubu
 - odemykání levelů podle nejdál dokončeného levelu – nový level nezamkne už hrané
 
