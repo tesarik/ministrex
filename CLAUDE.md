@@ -41,7 +41,10 @@ S uživatelem komunikuj česky.
 - **Kropenka** = nádobka se svěcenou vodou u vchodu do kostela; **aspergil** = přenosný kropáč.
 - **Loďka** je správný název.
 - **Purifikatorium** má křížek („liší se kostel od kostela“).
-- **Paténu nerozdělovat** na více položek.
+- **Paténu nerozdělovat** na více položek. Paténa = talířek, který ministrant drží pod bradou
+  při svatém přijímání (podle Dolní Újezd 2019, ne „leží na ní hostie“).
+- Ověřeno uživatelem: procesní kříž (krucifer jde za kadidelnicí a loďkou) a pravidlo svící
+  (2, při slavnostech 4 nebo 6, sedmá při koncelebraci sídelního biskupa).
 - Ponechat misál, lekcionář, zvonky, svíce a procesní kříž.
 - **Komže** = černá sukně; **superpelice** = rocheta = bílé svrchní roucho; **límec** = černý.
   Samostatná položka „rocheta“ není.

@@ -101,7 +101,8 @@ Totéž (a navíc, že `js/sprite-art.js` odpovídá generátoru) spouští GitH
 - 5 nových předmětů z příručky Dolní Újezd: obětní miska, evangeliář, relikviář, baldachýn,
   korouhev; nový level *Průvody a ostatky*
 - 49 nových prémiových otázek (každý level má teď 4–8), včetně patronů ministrantů
-- zdroj doplněn u misálu, svící, procesního kříže a lekcionáře (popisy upravené podle příručky)
+- zdroj doplněn u misálu, svící, procesního kříže, lekcionáře a patény (popisy upravené podle příručky;
+  paténa slouží ke svatému přijímání)
 - překreslené obrázky: velum, vimpa, humerál, pixida, kropenka, loďka, mitra, Vánoce
 - procvičování chyb, záloha postupu kódem, respektování omezení pohybu
 - instalace do mobilu a hraní offline
